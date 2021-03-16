@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Cloud Computing AS2 2021</title>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <script src="https://unpkg.com/axios@0.2.1/dist/axios.min.js"></script>
+    <!-- api gateway generated sdk -->
+    <script src="./sdk/lib/axios/dist/axios.standalone.js"></script>
+    <script src="./sdk/lib/CryptoJS/rollups/hmac-sha256.js"></script>
+    <script src="./sdk/lib/CryptoJS/rollups/sha256.js"></script>
+    <script src="./sdk/lib/CryptoJS/components/hmac.js"></script>
+    <script src="./sdk/lib/CryptoJS/components/enc-base64.js"></script>
+    <script src="./sdk/lib/url-template/url-template.js"></script>
+    <script src="./sdk/lib/apiGatewayCore/sigV4Client.js"></script>
+    <script src="./sdk/lib/apiGatewayCore/apiGatewayClient.js"></script>
+    <script src="./sdk/lib/apiGatewayCore/simpleHttpClient.js"></script>
+    <script src="./sdk/lib/apiGatewayCore/utils.js"></script>
+
+    <script src="./sdk/apigClient.js"></script>
+
+    <script src="./aws-sdk.min.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <h1>Cloud Computing AS2 2021</h1>
+
+      <!-- Search -->
+      <div>
+          <input type="text" name="textbox_search" id="search_id" class="textbox_search" placeholder="Search...">
+          <button @click="search">Search</button>
+      </div>
+
+      <!-- Insert images using SDK here -->
+      <div>
+        <v-card v-if="fileInfos.length > 0" class="mx-auto">
+          <v-list>
+            <v-subheader>List of Images</v-subheader>
+            <v-list-item-group color="primary">
+                <v-list-item v-for="(file, index) in fileInfos" :key="index">
+                  <v-list-item-content>
+                    <v-list-item-title class="mb-3">
+                      <a :href="file.url">{{ file.labels }}</a>
+                    </v-list-item-title>
+                    <v-list-item-subtitle>
+                      <img :src="file.url" :alt="file.name" height="80px">
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </v-card>
+      </div>
+    </div>
+    <script>
+      
+
+      var sdk = apigClientFactory.newClient({});
+
+      new Vue({
+        el: "#app",
+        vuetify: new Vuetify(),
+        data: {
+          fileInfos:[]
+        },
+        methods: {
+          search: async function (e) {
+            var vm = this
+            console.log("Search Clicked")
+            response = sdk.searchGet({q: document.getElementById("search_id").value},{},{})
+            console.log(response)
+            response.then(
+              function(data){
+                vm.fileInfos = data["data"]["results"]
+                console.log(vm.fileInfos)
+              }
+            )
+            // TODO: fill out logic here for what happens on search
+          }
+        }
+      })
+    </script>
+    <style type="text/css">
+      body {
+        background: #20262E;
+        padding: 20px;
+        font-family: sans-serif;
+      }
+      #app {
+        background: #fff;
+        border-radius: 4px;
+        padding: 20px;
+        transition: all 0.2s;
+        text-align: center;
+      }
+      #logo {
+        width: 100px;
+      }
+      h2 {
+        font-weight: bold;
+        margin-bottom: 15px;
+      }
+      h1, h2 {
+        font-weight: normal;
+        margin-bottom: 15px;
+      }
+      a {
+        color: #42b983;
+      }
+      img {
+        height:200px;
+        width: auto;
+        margin: auto;
+        display: block;
+        margin-bottom: 10px;
+      }
+    </style>
+  </body>
+</html>
